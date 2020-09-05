@@ -1,6 +1,16 @@
 require('dotenv').config()
 
-const { Client } = require('discord.js')
+const {Client} = require('discord.js')
+
+const firebase = require('firebase/app')
+const admin = require('firebase-admin')
+const serviceAccount = require('../serviceAccount.json')
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+})
+
+const db = admin.firestore()
 
 const client = new Client()
 const PREFIX = '$'
