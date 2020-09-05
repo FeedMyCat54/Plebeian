@@ -35,4 +35,12 @@ client.on('message', (message) => {
   }
 })
 
+client.on('guildCreate', async guildData => {
+  await db.collection('guilds').doc(guildData.id).set({
+    'guildId': guildData.id,
+    'guildName': guildData.name,
+    'prefix': PREFIX
+  })
+})
+
 client.login(process.env.PLEBEIAN_BOT_TOKEN)
