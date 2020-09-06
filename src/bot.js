@@ -35,13 +35,15 @@ client.on('message', (message) => {
       .substring(PREFIX.length)
       .split(/\s+/)
 
-    switch (CMD_NAME) {
-      case 'info':
-        client.commands.get('info').execute(message)
-        break
-      case 'Ping':
-        client.commands.get('ping').execute(message, args)
-        break
+    if (!client.commands.has(CMD_NAME)) return
+
+    const command = client.commands.get(CMD_NAME);
+
+    try {
+      command.execute(message, args)
+    } catch (error) {
+      console.error(error);
+      message.reply('there was an error trying to execute that command!');
     }
   }
 })
