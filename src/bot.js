@@ -1,8 +1,8 @@
 require('dotenv').config()
+const fs = require('fs')
 
-const {Client} = require('discord.js')
+const {Client, Collection} = require('discord.js')
 
-const firebase = require('firebase/app')
 const admin = require('firebase-admin')
 const serviceAccount = require('../serviceAccount.json')
 
@@ -13,6 +13,14 @@ admin.initializeApp({
 const db = admin.firestore()
 
 const client = new Client()
+client.commands = new Collection()
+const commandFiles = fs.readdirSync('./src/commands').filter(file => file.endsWith('.js'))
+
+for (const file of commandFiles) {
+  const command = require(`../src/commands/${file}`)
+  client.commands.set(command.name, command)
+}
+
 const PREFIX = '$'
 
 client.on('ready', () => {
@@ -29,8 +37,11 @@ client.on('message', (message) => {
 
     switch (CMD_NAME) {
       case 'info':
-        return message.channel.send('I like completing tasks against my will and long walks by the beach. ' +
-          '\nIf you want to learn more about me visit: https://github.com/FeedMyCat54/Plebeian')
+        client.commands.get('info').execute(message)
+        break
+      case 'Ping':
+        client.commands.get('ping').execute(message, args)
+        break
     }
   }
 })
