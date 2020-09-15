@@ -12,7 +12,7 @@ admin.initializeApp({
 
 const db = admin.firestore()
 
-const client = new Client()
+const client = new Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] })
 client.commands = new Collection()
 const commandFiles = fs.readdirSync('./src/commands').filter(file => file.endsWith('.js'))
 
