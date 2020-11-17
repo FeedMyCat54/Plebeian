@@ -10,6 +10,15 @@ const NodeCache = require('node-cache')
 
 const prefixes = new NodeCache()
 
+prefixes.on('set', async (key, value) => {
+  await db.collection('guilds').doc(key).update({
+    prefix: value
+  })
+  await db.collection('prefixes').doc(key).update({
+    prefix: value
+  })
+})
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 })
