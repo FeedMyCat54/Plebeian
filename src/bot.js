@@ -6,6 +6,10 @@ const {Client, Collection} = require('discord.js')
 const admin = require('firebase-admin')
 const serviceAccount = require('../serviceAccount.json')
 
+const NodeCache = require('node-cache')
+
+const preifxes = new NodeCache()
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 })
@@ -21,18 +25,24 @@ for (const file of commandFiles) {
   client.commands.set(command.name, command)
 }
 
-const PREFIX = '$'
+const DEFAULT_PREFIX = '$'
 
-client.on('ready', () => {
+client.on('ready', async () => {
+  // Cache the prefixes
+  const snapshot = await db.collection('prefixes').get()
+  snapshot.forEach(doc => {
+    preifxes.set(doc.id, doc.get('prefix'))
+  })
+  console.log(preifxes.get('751885914372046928'))
   console.log('Plebeian is ready!')
 })
 
 client.on('message', (message) => {
   if (message.author.bot) return
 
-  if (message.content.trim().startsWith(PREFIX)) {
+  if (message.content.trim().startsWith(DEFAULT_PREFIX)) {
     const [CMD_NAME, ...args] = message.content.trim()
-      .substring(PREFIX.length)
+      .substring(DEFAULT_PREFIX.length)
       .split(/\s+/)
 
     if (!client.commands.has(CMD_NAME)) return
@@ -52,7 +62,7 @@ client.on('guildCreate', async guildData => {
   await db.collection('guilds').doc(guildData.id).set({
     'guildId': guildData.id,
     'guildName': guildData.name,
-    'prefix': PREFIX
+    'prefix': DEFAULT_PREFIX
   })
 })
 
