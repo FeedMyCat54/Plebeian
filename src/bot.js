@@ -70,4 +70,10 @@ client.on('guildCreate', async guildData => {
   preifxes.set(guildData.id, DEFAULT_PREFIX)
 })
 
+client.on('guildDelete', async guildData => {
+  await db.collection('guilds').doc(guildData.id).delete()
+  await db.collection('prefixes').doc(guildData.id).delete()
+  preifxes.del(guildData.id)
+})
+
 client.login(process.env.PLEBEIAN_BOT_TOKEN)
