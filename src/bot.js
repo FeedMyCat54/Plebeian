@@ -64,6 +64,10 @@ client.on('guildCreate', async guildData => {
     'guildName': guildData.name,
     'prefix': DEFAULT_PREFIX
   })
+  await db.collection('prefixes').doc(guildData.id).set({
+    prefix: DEFAULT_PREFIX
+  })
+  preifxes.set(guildData.id, DEFAULT_PREFIX)
 })
 
 client.login(process.env.PLEBEIAN_BOT_TOKEN)
