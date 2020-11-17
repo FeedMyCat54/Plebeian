@@ -33,16 +33,16 @@ client.on('ready', async () => {
   snapshot.forEach(doc => {
     preifxes.set(doc.id, doc.get('prefix'))
   })
-  console.log(preifxes.get('751885914372046928'))
   console.log('Plebeian is ready!')
 })
 
 client.on('message', (message) => {
   if (message.author.bot) return
 
-  if (message.content.trim().startsWith(DEFAULT_PREFIX)) {
+  const serverPrefix  = preifxes.get(message.guild.id).toString()
+  if (message.content.trim().startsWith(serverPrefix)) {
     const [CMD_NAME, ...args] = message.content.trim()
-      .substring(DEFAULT_PREFIX.length)
+      .substring(serverPrefix.length)
       .split(/\s+/)
 
     if (!client.commands.has(CMD_NAME)) return
